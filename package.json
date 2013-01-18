@@ -4,7 +4,7 @@
   "description": "a canonical json implementation",
   "main": "index.js",
   "scripts": {
-    "test": "mocha"
+    "test": "node_modules/.bin/mocha test/index.js"
   },
   "repository": "",
   "author": "Mirko Kiefer <mail@mirkokiefer.com>",

@@ -1,0 +1,12 @@
+{
+  "name": "canonical-json",
+  "version": "0.0.1",
+  "description": "a canonical json implementation",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": "",
+  "author": "Mirko Kiefer <mail@mirkokiefer.com>",
+  "license": "BSD"
+}

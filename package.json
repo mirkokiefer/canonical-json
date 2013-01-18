@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "a canonical json implementation",
   "main": "index.js",
+  "website": "https://github.com/mirkok/canonical-json",
   "scripts": {
     "test": "node_modules/.bin/mocha test/index.js"
   },

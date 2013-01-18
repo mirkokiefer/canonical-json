@@ -11,8 +11,8 @@ Source: [https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Ob
 
 This module implements two alternative solutions to this problem:
 
-- [index.js](https://github.com/mirkok/canonical-json/index.js) is based on [Douglas Crockford's json2.js](https://github.com/douglascrockford/JSON-js/blob/master/json2.js). I modified it to serialize object keys sorted on the fly.
-- [index2.js](https://github.com/mirkok/canonical-json/index2.js) recursively creates a copy of the object to sort its keys. The copy is then simply passed to native JSON.stringify
+- [index.js](https://github.com/mirkok/canonical-json/blob/master/index.js) is based on [Douglas Crockford's json2.js](https://github.com/douglascrockford/JSON-js/blob/master/json2.js). I modified it to serialize object keys sorted on the fly.
+- [index2.js](https://github.com/mirkok/canonical-json/blob/master/index2.js) recursively creates a copy of the object to sort its keys. The copy is then simply passed to native JSON.stringify
 
 It currently exports the index.js version.
 
@@ -26,4 +26,4 @@ copy and native JSON.stringify with sorted keys: 291 ms
 ```
 
 The tests were run in Node.js on a 2011 MacBook Pro.  
-Performance test source: [test/performance.js](https://github.com/mirkok/canonical-json/test/performance.js)
+Performance test source: [test/performance.js](https://github.com/mirkok/canonical-json/blob/master/test/performance.js)

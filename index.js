@@ -148,8 +148,9 @@ function str(key, holder) {
         } else {
 
 // Otherwise, iterate through all of the keys in the object.
-
-            for (k in value) {
+            var keysSorted = Object.keys(value).sort()
+            for (i in keysSorted) {
+                k = keysSorted[i]
                 if (Object.prototype.hasOwnProperty.call(value, k)) {
                     v = str(k, value);
                     if (v) {

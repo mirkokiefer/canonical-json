@@ -1,9 +1,9 @@
 {
   "name": "canonical-json",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "a canonical json implementation",
   "main": "index.js",
-  "homepage": "https://github.com/mirkok/canonical-json",
+  "homepage": "https://github.com/mirkokiefer/canonical-json",
   "scripts": {
     "test": "node_modules/.bin/mocha test/index.js"
   },

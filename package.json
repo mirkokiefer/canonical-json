@@ -7,7 +7,10 @@
   "scripts": {
     "test": "node_modules/.bin/mocha test/index.js"
   },
-  "repository": "",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/mirkokiefer/canonical-json.git"
+  },
   "author": "Mirko Kiefer <mail@mirkokiefer.com>",
   "license": "BSD"
 }

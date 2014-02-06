@@ -19,11 +19,9 @@ It currently exports the index.js version.
 ##Performance comparison
 I compared the performance of native JSON.stringify and the two alternative implementations that output keys sorted:
 
-```
-native JSON.stringify: 75 ms
-js JSON.stringify with sorted keys: 308 ms
-copy and native JSON.stringify with sorted keys: 291 ms
-```
+- native JSON.stringify: `75 ms`
+- js JSON.stringify with sorted keys ([implementation](https://github.com/mirkok/canonical-json/blob/master/index.js)): `308 ms`
+- copy and native JSON.stringify with sorted keys ([implementation](https://github.com/mirkok/canonical-json/blob/master/index2.js): `291 ms`
 
 The tests were run in Node.js on a 2011 MacBook Pro.  
 Performance test source: [test/performance.js](https://github.com/mirkok/canonical-json/blob/master/test/performance.js)

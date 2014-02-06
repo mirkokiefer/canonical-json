@@ -217,4 +217,3 @@ var stringify = function (value, replacer, space) {
 };
 
 module.exports = stringify
-

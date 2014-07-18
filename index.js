@@ -44,8 +44,7 @@ function quote(string) {
 }
 
 
-function str(key, holder) {
-
+function str(key, holder, comparator) {
 // Produce a string from holder[key].
 
     var i,          // The loop counter.
@@ -117,7 +116,7 @@ function str(key, holder) {
 
             length = value.length;
             for (i = 0; i < length; i += 1) {
-                partial[i] = str(i, value) || 'null';
+                partial[i] = str(i, value, comparator) || 'null';
             }
 
 // Join all of the elements together, separated with commas, and wrap them in
@@ -139,7 +138,7 @@ function str(key, holder) {
             for (i = 0; i < length; i += 1) {
                 if (typeof rep[i] === 'string') {
                     k = rep[i];
-                    v = str(k, value);
+                    v = str(k, value, comparator);
                     if (v) {
                         partial.push(quote(k) + (gap ? ': ' : ':') + v);
                     }
@@ -148,11 +147,11 @@ function str(key, holder) {
         } else {
 
 // Otherwise, iterate through all of the keys in the object.
-            var keysSorted = Object.keys(value).sort()
+            var keysSorted = Object.keys(value).sort(comparator)
             for (i in keysSorted) {
                 k = keysSorted[i]
                 if (Object.prototype.hasOwnProperty.call(value, k)) {
-                    v = str(k, value);
+                    v = str(k, value, comparator);
                     if (v) {
                         partial.push(quote(k) + (gap ? ': ' : ':') + v);
                     }
@@ -174,7 +173,7 @@ function str(key, holder) {
 }
 
 // If the JSON object does not yet have a stringify method, give it one.
-var stringify = function (value, replacer, space) {
+var stringify = function (value, replacer, space, comparator) {
 
 // The stringify method takes a value and an optional replacer, and an optional
 // space parameter, and returns a JSON text. The replacer can be a function
@@ -213,7 +212,7 @@ var stringify = function (value, replacer, space) {
 // Make a fake root object containing our value under the key of ''.
 // Return the result of stringifying the value.
 
-    return str('', {'': value});
+    return str('', {'': value}, comparator);
 };
 
 module.exports = stringify

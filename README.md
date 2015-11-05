@@ -26,5 +26,13 @@ I compared the performance of native JSON.stringify and the two alternative impl
 The tests were run in Node.js on a 2011 MacBook Pro.
 Performance test source: [test/performance.js](https://github.com/mirkok/canonical-json/blob/master/test/performance.js)
 
+## Command Line Interface
+
+To run this from the command line you can use `canonical-json.js` like so:
+
+```
+cat sample.json | ./canonical-json.js > sample-canonical.json
+```
+
 ## Links
 - [CANON](https://github.com/davidchambers/CANON) is a project with similar goals.

@@ -7,6 +7,9 @@
   "scripts": {
     "test": "node_modules/.bin/mocha test/index.js"
   },
+  "bin": {
+    "canonical-json": "./canonical-json.js"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/mirkokiefer/canonical-json.git"

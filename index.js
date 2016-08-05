@@ -119,6 +119,7 @@ function str(key, holder) {
             for (i = 0; i < length; i += 1) {
                 partial[i] = str(i, value) || 'null';
             }
+            partial = partial.sort()
 
 // Join all of the elements together, separated with commas, and wrap them in
 // brackets.

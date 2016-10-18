@@ -16,6 +16,22 @@ This module implements two alternative solutions to this problem:
 
 It currently exports the index.js version.
 
+## Usage example
+NPM install: `npm install canonical-json --save`
+
+This modules exports a function:
+
+```
+var stringifyCanon = require('canonical-json');
+
+var object1 = [{d: {a: 2, c: 1}, b: 2, a: 1, c: 3}, 2]
+
+var string1 = JSON.stringify(object1); // not deterministic
+var string2 = stringifyCanon(object1); // guaranteed to be '[{"a":1,"b":2,"c":3,"d":{"a":2,"c":1}},2]'
+
+console.log(string1, string2);
+```
+
 ## Performance comparison
 I compared the performance of native JSON.stringify and the two alternative implementations that output keys sorted:
 

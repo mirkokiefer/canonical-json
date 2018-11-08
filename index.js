@@ -111,6 +111,7 @@ function str(key, holder) {
 // Is the value an array?
 
         if (Object.prototype.toString.apply(value) === '[object Array]') {
+            value.sort();
 
 // The value is an array. Stringify every element. Use null as a placeholder
 // for non-JSON values.

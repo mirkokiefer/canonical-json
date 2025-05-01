@@ -1,3 +1,4 @@
+// Naive implementation, not in use by this module:
 
 var isObject = function(a) {
   return Object.prototype.toString.call(a) === '[object Object]'

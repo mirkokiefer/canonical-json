@@ -3,7 +3,7 @@
 
 # canonical-json - Deterministic JSON.stringify()
 
-The goal of this module is to implement a version of `JSON.stringify` that returns a **deterministic**, **canonical JSON** format.
+This module implements a version of `JSON.stringify` that returns a **deterministic**, **canonical JSON** format.
 
 Canonical JSON means that the same object should always be stringified to the exact same string. JavaScript’s native `JSON.stringify` does not guarantee any order for object keys when serializing:
 

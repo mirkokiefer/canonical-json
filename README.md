@@ -53,7 +53,7 @@ Tested on Node.js (2022 MacBook Air M2):
 
 - **native `JSON.stringify`**: ~75 ms  
 - **canonical `index.js`**: ~156 ms  
-- **copy & native `index2.js`**: ~291 ms  
+- **copy & native `index2.js`**: ~117 ms  
 
 Performance test source: [test/performance.js](https://github.com/mirkokiefer/canonical-json/blob/master/test/performance.js)
 

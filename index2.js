@@ -1,26 +1,20 @@
-// Naive implementation, not in use by this module:
-
-var isObject = function(a) {
+function isObject(a) {
   return Object.prototype.toString.call(a) === '[object Object]'
 }
 
-var copyObjectWithSortedKeys = function(object) {
-  if (isObject(object)) {
-    var newObj = {}
-    var keysSorted = Object.keys(object).sort()
-    var key
-    for (var i = 0, len = keysSorted.length; i < len; i++) {
-      key = keysSorted[i]
-      newObj[key] = copyObjectWithSortedKeys(object[key])
+function copyObjectWithSortedKeys(obj) {
+  if (isObject(obj)) {
+    const sorted = {}
+    for (const key of Object.keys(obj).sort()) {
+      sorted[key] = copyObjectWithSortedKeys(obj[key])
     }
-    return newObj
-  } else if (Array.isArray(object)) {
-    return object.map(copyObjectWithSortedKeys)
-  } else {
-    return object
+    return sorted
+  } else if (Array.isArray(obj)) {
+    return obj.map(copyObjectWithSortedKeys)
   }
+  return obj
 }
 
-module.exports = function(object) {
-  return JSON.stringify(copyObjectWithSortedKeys(object))
+export function stringifyCopy(value) {
+  return JSON.stringify(copyObjectWithSortedKeys(value))
 }

@@ -1,35 +1,67 @@
-//var testObject = {a: 1, b: 'def', c: {d: 1, e: 2, f: {g: 1, h: 'abc'}}}
-import stringify from './index.js'
-const jsStringify = stringify
+import assert from 'assert';
+import stringify from './index.js';
 
-const timeFunction = function(fun) {
-  const before = new Date().getTime();
-  fun()
-  const after = new Date().getTime();
-  return after - before
+function timeFunction(fn) {
+  const before = Date.now();
+  fn();
+  return Date.now() - before;
 }
 
-const count = 100000
-let objects
+describe('canonical-json — correctness', () => {
+  it('serializes a flat object with sorted keys', () => {
+    const obj = { b: 2, a: 1, c: 3 };
+    const out = stringify(obj);
+    // keys must come out in alphabetical order
+    assert.strictEqual(out, '{"a":1,"b":2,"c":3}');
+  });
 
-const createObjects = function() {
-  objects = []
-  for (let i=0; i<count; i++) {
-    objects.push({a: Math.random(), b: 'def', c: {d: Math.random(), e: Math.random(), f: {g: Math.random(), h: 'abc'}}})
-  }
-}
+  it('serializes a nested object with sorted keys at each level', () => {
+    const obj = {
+      z: { y: 2, x: 1 },
+      a: [ { b: 1, a: 0 }, 3 ]
+    };
+    const out = stringify(obj);
+    // top‐level keys: a,z
+    // in array, each object keys: a,b
+    assert.strictEqual(
+      out,
+      '{"a":[{"a":0,"b":1},3],"z":{"x":1,"y":2}}'
+    );
+  });
+});
 
-const stringifyLotsOfTimes = function(stringify, objects) { return function() {
-  for (let i=0; i<count; i++) {
-    const result = stringify(objects[i])
-  }
-}}
+describe('canonical-json — performance', function() {
+  this.timeout(0); // allow long‐running benchmarks
 
-const time0 = timeFunction(createObjects)
-console.log('create objects:', time0)
+  const count = 100_000;
+  let objects;
 
-const time1 = timeFunction(stringifyLotsOfTimes(JSON.stringify, objects))
-console.log('native JSON.stringify:', time1)
+  before(() => {
+    objects = [];
+    for (let i = 0; i < count; i++) {
+      objects.push({
+        a: Math.random(),
+        b: 'def',
+        c: {
+          d: Math.random(),
+          e: Math.random(),
+          f: { g: Math.random(), h: 'abc' }
+        }
+      });
+    }
+  });
 
-const time2 = timeFunction(stringifyLotsOfTimes(jsStringify, objects))
-console.log('js JSON.stringify:', time2)
+  it('native JSON.stringify', () => {
+    const t = timeFunction(() => {
+      for (const o of objects) JSON.stringify(o);
+    });
+    console.log('native JSON.stringify:', t, 'ms');
+  });
+
+  it('canonical-json.stringify', () => {
+    const t = timeFunction(() => {
+      for (const o of objects) stringify(o);
+    });
+    console.log('canonical-json stringify:', t, 'ms');
+  });
+});

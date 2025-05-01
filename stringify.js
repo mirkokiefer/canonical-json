@@ -1,31 +1,15 @@
-function f(n) {
-  return n < 10 ? '0' + n : String(n)
-}
-
-const escapable = /[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g
 let gap = ''
 let indent = ''
-const meta = {
-  '\b': '\\b',
-  '\t': '\\t',
-  '\n': '\\n',
-  '\f': '\\f',
-  '\r': '\\r',
-  '"': '\\"',
-  '\\': '\\\\'
-}
 let rep
+let cmp
+const escapable = /[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g
+const meta = { '\b':'\\b', '\t':'\\t', '\n':'\\n', '\f':'\\f', '\r':'\\r', '"':'\\"', '\\':'\\\\' }
 
-function quote(string) {
+function quote(str) {
   escapable.lastIndex = 0
-  return escapable.test(string)
-    ? '"' + string.replace(escapable, a => {
-        const c = meta[a]
-        return typeof c === 'string'
-          ? c
-          : '\\u' + ('0000' + a.charCodeAt(0).toString(16)).slice(-4)
-      }) + '"'
-    : '"' + string + '"'
+  return escapable.test(str)
+    ? '"' + str.replace(escapable, a => meta[a] || ('\\u' + ('0000' + a.charCodeAt(0).toString(16)).slice(-4))) + '"'
+    : '"' + str + '"'
 }
 
 function str(key, holder) {
@@ -41,7 +25,6 @@ function str(key, holder) {
     case 'number': return isFinite(value) ? String(value) : 'null'
     case 'boolean':
     case 'undefined':
-    case 'null': return String(value)
     case 'object':
       if (value === null) return 'null'
       const mind = gap
@@ -49,42 +32,45 @@ function str(key, holder) {
       const partial = []
       if (Array.isArray(value)) {
         for (let i = 0; i < value.length; i++) partial[i] = str(i, value) || 'null'
-        const v = partial.length === 0
-          ? '[]'
-          : gap
-            ? '[\n' + gap + partial.join(',\n' + gap) + '\n' + mind + ']'
-            : '[' + partial.join(',') + ']'
-        gap = mind
-        return v
-      }
-      if (rep && typeof rep === 'object') {
-        for (const k of rep) {
-          const v = str(k, value)
-          if (v) partial.push(quote(k) + (gap ? ': ' : ':') + v)
-        }
       } else {
-        for (const k of Object.keys(value).sort()) {
+        const keys = Object.keys(value).sort(cmp)
+        for (const k of keys) {
           if (Object.prototype.hasOwnProperty.call(value, k)) {
             const v = str(k, value)
             if (v) partial.push(quote(k) + (gap ? ': ' : ':') + v)
           }
         }
       }
-      const v = partial.length === 0
-        ? '{}'
-        : gap
-          ? '{\n' + gap + partial.join(',\n' + gap) + '\n' + mind + '}'
-          : '{' + partial.join(',') + '}'
+      let v
+      if (Array.isArray(value)) {
+        v = partial.length === 0
+          ? '[]'
+          : gap
+            ? '[\n' + gap + partial.join(',\n' + gap) + '\n' + mind + ']'
+            : '[' + partial.join(',') + ']'
+      } else {
+        v = partial.length === 0
+          ? '{}'
+          : gap
+            ? '{\n' + gap + partial.join(',\n' + gap) + '\n' + mind + '}'
+            : '{' + partial.join(',') + '}'
+      }
       gap = mind
       return v
+    default:
+      return String(value)
   }
 }
 
-export default function stringify(value, replacer, space) {
+export default function stringify(value, replacer, space, keyCompare) {
   gap = ''
   indent = ''
-  if (typeof space === 'number') indent = ' '.repeat(space)
-  else if (typeof space === 'string') indent = space
   rep = replacer
+  cmp = typeof keyCompare === 'function' ? keyCompare : undefined
+  if (typeof space === 'number') {
+    indent = ' '.repeat(space)
+  } else if (typeof space === 'string') {
+    indent = space
+  }
   return str('', { '': value })
 }

@@ -16,7 +16,7 @@ This module implements two alternative solutions to this problem:
 - **stringify.js** is based on [Douglas Crockford's json2.js](https://github.com/douglascrockford/JSON-js/blob/master/json2.js). It’s modified to serialize object keys in sorted order on the fly.
 - **copy-stringify.js** recursively creates a copy of the object with sorted keys, then passes it to native `JSON.stringify`.
 
-_By default, this package exports the `index.js` version._
+_By default, this package exports the `index.js` version (`stringify`), and also provides `stringifyCopy` for the copy-based approach._
 
 ---
 
@@ -31,19 +31,65 @@ npm install canonical-json
 ### ES Module
 
 ```js
-import stringify from 'canonical-json'
+import stringify, { stringifyCopy } from 'canonical-json'
 
 const obj = { b: 2, a: 1, c: { y: 0, x: 9 } }
-console.log(stringify(obj)) // {"a":1,"b":2,"c":{"x":9,"y":0}}
+console.log(stringify(obj))       // {"a":1,"b":2,"c":{"x":9,"y":0}}
+console.log(stringifyCopy(obj))   // same output via deep-copy approach
+```
+
+#### Custom Key Order
+
+You can pass an optional comparator function to control key ordering:
+
+```js
+const obj = {
+  first: 'a',
+  second: 'b',
+  third: 'c',
+  fourth: 'd',
+  last: 'foo'
+}
+
+const order = { first: 1, second: 2, third: 3, fourth: 4 }
+const cmp = (a, b) => (order[a] || 9999) - (order[b] || 9999)
+
+console.log(stringify(obj, undefined, undefined, cmp))
+// {"first":"a","second":"b","third":"c","fourth":"d","last":"foo"}
+
+console.log(stringifyCopy(obj, cmp))
+// same result via copy-based serializer
 ```
 
 ### CommonJS
 
 ```js
-const stringify = require('canonical-json')
+const { default: stringify, stringifyCopy } = require('canonical-json')
 
 console.log(stringify({ foo: 'bar', baz: 1 }))
 ```
+
+---
+
+## API
+
+```ts
+function stringify(
+  value: any,
+  replacer?: (key: string, value: any) => any,
+  space?: string | number,
+  keyCompare?: (a: string, b: string) => number
+): string
+
+function stringifyCopy(
+  value: any,
+  keyCompare?: (a: string, b: string) => number
+): string
+
+export default stringify
+```
+
+- **keyCompare**: optional comparator `(a, b) => number` for object key sorting.
 
 ---
 

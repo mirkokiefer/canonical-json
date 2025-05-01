@@ -14,7 +14,7 @@ Source: https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Obj
 This module implements two alternative solutions to this problem:
 
 - **stringify.js** is based on [Douglas Crockford's json2.js](https://github.com/douglascrockford/JSON-js/blob/master/json2.js). It’s modified to serialize object keys in sorted order on the fly.
-- **copy-stringify.js** recursively creates a copy of the object with sorted keys, then passes it to native `JSON.stringify`.
+- **stringify-copy.js** recursively creates a copy of the object with sorted keys, then passes it to native `JSON.stringify`.
 
 _By default, this package exports the `index.js` version (`stringify`), and also provides `stringifyCopy` for the copy-based approach._
 
@@ -99,7 +99,7 @@ Tested on Node.js (2022 MacBook Air M2):
 
 - **native `JSON.stringify`**: ~75 ms  
 - **canonical `stringify.js`**: ~156 ms  
-- **copy & native `copy-stringify.js`**: ~117 ms  
+- **copy & native `stringify-copy.js`**: ~117 ms  
 
 Performance test source: [test/performance.js](https://github.com/mirkokiefer/canonical-json/blob/master/test/performance.js)
 

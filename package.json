@@ -2,18 +2,23 @@
   "name": "canonical-json",
   "version": "0.0.4",
   "description": "a canonical json implementation",
+  "type": "module",
   "main": "index.js",
-  "homepage": "https://github.com/mirkokiefer/canonical-json",
-  "scripts": {
-    "test": "node_modules/.bin/mocha test/index.js"
-  },
   "bin": {
     "canonical-json": "./canonical-json.js"
+  },
+  "scripts": {
+    "test": "mocha test.mjs"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/mirkokiefer/canonical-json.git"
   },
+  "homepage": "https://github.com/mirkokiefer/canonical-json",
   "author": "Mirko Kiefer <mail@mirkokiefer.com>",
-  "license": "BSD"
+  "license": "MIT",
+  "devDependencies": {
+    "mocha": "^10.0.0",
+    "@types/node": "^18.0.0"
+  }
 }

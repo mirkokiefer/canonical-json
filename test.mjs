@@ -1,5 +1,5 @@
 import stringify from './index.js'
-import { stringifyCopy } from './index2.js'
+import { stringifyCopy } from './index.js'
 import assert from 'assert'
 
 function timeFunction(fn) {

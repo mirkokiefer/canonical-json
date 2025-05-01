@@ -1,9 +1,9 @@
 [![npm version](https://img.shields.io/npm/v/canonical-json.svg)](https://www.npmjs.com/package/canonical-json)
 [![tests](https://github.com/mirkokiefer/canonical-json/actions/workflows/test.yml/badge.svg)](https://github.com/mirkokiefer/canonical-json/actions)
 
-# Canonical JSON
+# canonical-json - Deterministic JSON.stringify()
 
-The goal of this module is to implement a version of `JSON.stringify` that returns a **canonical JSON** format.
+The goal of this module is to implement a version of `JSON.stringify` that returns a **deterministic**, **canonical JSON** format.
 
 Canonical JSON means that the same object should always be stringified to the exact same string. JavaScript’s native `JSON.stringify` does not guarantee any order for object keys when serializing:
 

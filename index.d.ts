@@ -1,6 +1,6 @@
 export function stringify(
   value: any,
-  replacer?: (key: string, value: any) => any,
+  replacer?: ((key: string, value: any) => any) | Array<string | number>,
   space?: string | number,
   keyCompare?: (a: string, b: string) => number
 ): string

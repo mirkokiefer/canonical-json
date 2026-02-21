@@ -34,6 +34,29 @@ describe('correctness', () => {
     assert.strictEqual(stringify(obj, undefined, undefined, cmp), expected)
     assert.strictEqual(stringifyCopy(obj, cmp), expected)
   })
+
+  it('matches JSON.stringify for top-level non-serializable values', () => {
+    assert.strictEqual(stringify(undefined), JSON.stringify(undefined))
+    assert.strictEqual(stringify(() => 42), JSON.stringify(() => 42))
+    assert.strictEqual(stringify(Symbol('x')), JSON.stringify(Symbol('x')))
+  })
+
+  it('throws on BigInt values', () => {
+    assert.throws(() => stringify(1n), TypeError)
+  })
+
+  it('supports replacer arrays for object properties', () => {
+    const obj = { b:2, a:1, c:{ c:3, a:1, b:2 } }
+    assert.strictEqual(stringify(obj, ['b', 'c', 'a']), '{"a":1,"b":2,"c":{"a":1,"b":2,"c":3}}')
+    assert.strictEqual(stringify(obj, ['b']), '{"b":2}')
+  })
+
+  it('matches native space normalization rules', () => {
+    const obj = { a:1 }
+    assert.strictEqual(stringify(obj, undefined, 20), JSON.stringify(obj, undefined, 20))
+    assert.strictEqual(stringify(obj, undefined, '..............'), JSON.stringify(obj, undefined, '..............'))
+  })
+
 })
 
 describe('performance', function() {

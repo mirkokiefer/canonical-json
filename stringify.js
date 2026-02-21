@@ -24,7 +24,6 @@ function str(key, holder) {
     case 'string': return quote(value)
     case 'number': return isFinite(value) ? String(value) : 'null'
     case 'boolean':
-    case 'undefined':
     case 'object':
       if (value === null) return 'null'
       const mind = gap
@@ -57,6 +56,12 @@ function str(key, holder) {
       }
       gap = mind
       return v
+    case 'undefined':
+    case 'function':
+    case 'symbol':
+      return undefined
+    case 'bigint':
+      throw new TypeError('Do not know how to serialize a BigInt')
     default:
       return String(value)
   }

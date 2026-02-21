@@ -34,6 +34,16 @@ describe('correctness', () => {
     assert.strictEqual(stringify(obj, undefined, undefined, cmp), expected)
     assert.strictEqual(stringifyCopy(obj, cmp), expected)
   })
+
+  it('matches JSON.stringify for top-level non-serializable values', () => {
+    assert.strictEqual(stringify(undefined), JSON.stringify(undefined))
+    assert.strictEqual(stringify(() => 42), JSON.stringify(() => 42))
+    assert.strictEqual(stringify(Symbol('x')), JSON.stringify(Symbol('x')))
+  })
+
+  it('throws on BigInt values', () => {
+    assert.throws(() => stringify(1n), TypeError)
+  })
 })
 
 describe('performance', function() {

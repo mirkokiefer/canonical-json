@@ -23,7 +23,7 @@ function str(key, holder) {
   switch (typeof value) {
     case 'string': return quote(value)
     case 'number': return isFinite(value) ? String(value) : 'null'
-    case 'boolean':
+    case 'boolean': return String(value)
     case 'object':
       if (value === null) return 'null'
       const mind = gap

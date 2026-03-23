@@ -68,3 +68,37 @@ describe('performance', function() {
     console.log('stringifyCopy:', timeFunction(() => objects.forEach(o => stringifyCopy(o))), 'ms')
   })
 })
+
+describe('boolean handling', () => {
+  it('serializes true', () => {
+    assert.strictEqual(stringify(true), 'true')
+    assert.strictEqual(stringifyCopy(true), 'true')
+  })
+
+  it('serializes false', () => {
+    assert.strictEqual(stringify(false), 'false')
+    assert.strictEqual(stringifyCopy(false), 'false')
+  })
+
+  it('serializes booleans in objects', () => {
+    assert.strictEqual(stringify({a: true, b: false}), '{"a":true,"b":false}')
+    assert.strictEqual(stringifyCopy({a: true, b: false}), '{"a":true,"b":false}')
+  })
+
+  it('serializes booleans in arrays', () => {
+    assert.strictEqual(stringify([true, false]), '[true,false]')
+    assert.strictEqual(stringifyCopy([true, false]), '[true,false]')
+  })
+
+  it('serializes nested booleans', () => {
+    const obj = {x: {deep: true}, y: [false, {z: true}]}
+    const expected = '{"x":{"deep":true},"y":[false,{"z":true}]}'
+    assert.strictEqual(stringify(obj), expected)
+    assert.strictEqual(stringifyCopy(obj), expected)
+  })
+
+  it('matches JSON.stringify for booleans', () => {
+    assert.strictEqual(stringify(true), JSON.stringify(true))
+    assert.strictEqual(stringify(false), JSON.stringify(false))
+  })
+})

@@ -53,15 +53,54 @@ stringify({ third: 'c', first: 'a', second: 'b' }, null, null, cmp)
 // '{"first":"a","second":"b","third":"c"}'
 ```
 
+### Streaming with `walk`
+
+`walk` traverses the value and streams canonical JSON chunks to a callback — without building the full string:
+
+```js
+import { createHash } from 'node:crypto'
+import { walk } from 'canonical-json'
+
+const hasher = createHash('sha256')
+walk(obj, chunk => hasher.update(chunk))
+const digest = hasher.digest('hex')
+```
+
+### Convenience hashing
+
+For Node.js/Bun/Deno, a separate entry point provides one-liner hashing without pulling `node:crypto` into browser builds:
+
+```js
+import { hash } from 'canonical-json/hash'
+
+hash(obj)              // sha256 hex digest
+hash(obj, 'md5')       // md5 hex digest
+hash(obj, 'sha512')    // sha512 hex digest
+```
+
 ## API
 
 ```ts
+// canonical-json
 export default function stringify(
   value: any,
   replacer?: ((key: string, value: any) => any) | string[],
   space?: string | number,
   keyCompare?: (a: string, b: string) => number
 ): string | undefined
+
+export function walk(
+  value: any,
+  write: (chunk: string) => void,
+  keyCompare?: (a: string, b: string) => number
+): void
+
+// canonical-json/hash (Node.js/Bun/Deno only)
+export function hash(
+  value: any,
+  algorithm?: string,    // default: 'sha256'
+  keyCompare?: (a: string, b: string) => number
+): string               // hex digest
 ```
 
 ## RFC 8785 Compliance

@@ -1,6 +1,7 @@
 import { describe, it } from 'node:test'
 import assert from 'node:assert/strict'
-import stringify from './index.js'
+import stringify, { walk } from './index.js'
+import { hash } from './hash.js'
 
 describe('correctness', () => {
   it('flat object with default sort', () => {
@@ -131,6 +132,77 @@ describe('replacer support', () => {
       return value
     }, 2)
     assert.equal(result, JSON.stringify({a: 1, b: 2}, null, 2))
+  })
+})
+
+describe('walk', () => {
+  function collect(value, keyCompare) {
+    const chunks = []
+    walk(value, chunk => chunks.push(chunk), keyCompare)
+    return chunks
+  }
+
+  it('produces same output as stringify when joined', () => {
+    const cases = [
+      { b:2, a:1, c:3 },
+      [1, 'two', true, null],
+      { nested: { z:1, a:2 }, arr: [false, { x:0 }] },
+      'hello',
+      42,
+      true,
+      null,
+    ]
+    for (const value of cases) {
+      assert.equal(collect(value).join(''), stringify(value))
+    }
+  })
+
+  it('emits chunks incrementally (not one big string)', () => {
+    const chunks = collect({ a:1, b: [2, 3] })
+    assert.ok(chunks.length > 1)
+  })
+
+  it('detects circular references', () => {
+    const obj = { a: 1 }
+    obj.self = obj
+    assert.throws(() => collect(obj), TypeError)
+  })
+
+  it('supports custom key comparator', () => {
+    const order = { first:1, second:2 }
+    const cmp = (a, b) => (order[a]||9999) - (order[b]||9999)
+    assert.equal(collect({ second:'b', first:'a', last:'c' }, cmp).join(''), '{"first":"a","second":"b","last":"c"}')
+  })
+
+  it('skips undefined, function, and symbol values in objects', () => {
+    assert.equal(collect({ a:1, b:undefined, c:()=>{}, d:Symbol(), e:2 }).join(''), '{"a":1,"e":2}')
+  })
+
+  it('serializes -0 as 0', () => {
+    assert.equal(collect(-0).join(''), '0')
+  })
+
+  it('handles toJSON correctly', () => {
+    const obj = { a: { toJSON() { return undefined } }, b: 1, c: new Date('2024-01-01') }
+    assert.equal(collect(obj).join(''), stringify(obj))
+  })
+})
+
+describe('hash', () => {
+  it('produces consistent sha256 hash', () => {
+    const h1 = hash({ b:2, a:1 })
+    const h2 = hash({ a:1, b:2 })
+    assert.equal(h1, h2)
+    assert.equal(h1.length, 64) // hex sha256
+  })
+
+  it('different objects produce different hashes', () => {
+    assert.notEqual(hash({ a:1 }), hash({ a:2 }))
+  })
+
+  it('supports alternative algorithms', () => {
+    const h = hash({ a:1 }, 'md5')
+    assert.equal(h.length, 32) // hex md5
   })
 })
 

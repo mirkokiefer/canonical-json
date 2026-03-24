@@ -8,6 +8,10 @@
     ".": {
       "types": "./index.d.ts",
       "import": "./index.js"
+    },
+    "./hash": {
+      "types": "./hash.d.ts",
+      "import": "./hash.js"
     }
   },
   "types": "index.d.ts",
@@ -16,7 +20,10 @@
     "index.d.ts",
     "stringify.js",
     "stringify-copy.js",
-    "canonical-json.js"
+    "canonical-json.js",
+    "walk.js",
+    "hash.js",
+    "hash.d.ts"
   ],
   "bin": {
     "canonical-json": "./canonical-json.js"

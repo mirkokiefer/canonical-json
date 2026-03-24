@@ -115,7 +115,23 @@ When called without `replacer`, `space`, or `keyCompare`, the output conforms to
 ## CLI
 
 ```bash
-echo '{"b":2,"a":1}' | canonical-json > out.json
+# Canonicalize
+echo '{"b":2,"a":1}' | canonical-json
+# {"a":1,"b":2}
+
+# Content hash (default sha256)
+echo '{"b":2,"a":1}' | canonical-json hash
+# 43258cff783fe7036d8a43033f830adfc60ec037...
+
+# Hash with specific algorithm
+echo '{"b":2,"a":1}' | canonical-json hash --algo md5
+
+# Hash multiple files
+canonical-json hash *.json
+
+# Verify files are canonical (exit 1 if not)
+canonical-json verify data.json
+canonical-json verify *.json
 ```
 
 ## Test

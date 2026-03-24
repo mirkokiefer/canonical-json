@@ -1,5 +1,7 @@
-import defaultStringify from './stringify.js'
+import _stringify from './stringify.js'
 import { stringifyCopy } from './stringify-copy.js'
 
-export { defaultStringify as stringify, stringifyCopy }
-export default defaultStringify
+export default function stringify(value, replacer, space, keyCompare) {
+  if (!replacer && !space) return stringifyCopy(value, keyCompare)
+  return _stringify(value, replacer, space, keyCompare)
+}

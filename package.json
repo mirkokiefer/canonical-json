@@ -1,14 +1,39 @@
 {
   "name": "canonical-json",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "a canonical json implementation",
   "type": "module",
   "main": "index.js",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./index.js"
+    }
+  },
+  "types": "index.d.ts",
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "stringify.js",
+    "stringify-copy.js",
+    "canonical-json.js"
+  ],
   "bin": {
     "canonical-json": "./canonical-json.js"
   },
   "scripts": {
-    "test": "mocha test.mjs"
+    "test": "node --test test.js"
+  },
+  "keywords": [
+    "json",
+    "canonical",
+    "deterministic",
+    "stringify",
+    "sorted",
+    "stable"
+  ],
+  "engines": {
+    "node": ">=14"
   },
   "repository": {
     "type": "git",
@@ -16,9 +41,5 @@
   },
   "homepage": "https://github.com/mirkokiefer/canonical-json",
   "author": "Mirko Kiefer <mail@mirkokiefer.com>",
-  "license": "MIT",
-  "devDependencies": {
-    "mocha": "^10.0.0",
-    "@types/node": "^18.0.0"
-  }
+  "license": "MIT"
 }

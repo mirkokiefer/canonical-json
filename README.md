@@ -3,22 +3,9 @@
 
 # canonical-json - Deterministic JSON.stringify()
 
-This module implements a version of `JSON.stringify` that returns a **deterministic**, **canonical JSON** format.
+A drop-in replacement for `JSON.stringify` that produces **deterministic**, **canonical JSON** output compliant with [RFC 8785 (JSON Canonicalization Scheme)](https://www.rfc-editor.org/rfc/rfc8785).
 
-Canonical JSON means that the same object should always be stringified to the exact same string. JavaScript’s native `JSON.stringify` does not guarantee any order for object keys when serializing:
-
-> Properties of non-array objects are not guaranteed to be stringified in any particular order. Do not rely on ordering of properties within the same object within the stringification.
-
-Source: https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/JSON/stringify
-
-This module implements two alternative solutions to this problem:
-
-- **stringify.js** is based on [Douglas Crockford's json2.js](https://github.com/douglascrockford/JSON-js/blob/master/json2.js). It’s modified to serialize object keys in sorted order on the fly.
-- **stringify-copy.js** recursively creates a copy of the object with sorted keys, then passes it to native `JSON.stringify`.
-
-_By default, this package exports the `index.js` version (`stringify`), and also provides `stringifyCopy` for the copy-based approach._
-
----
+Ideal for content-addressable hashing, digital signatures, and distributed systems where identical objects must produce identical bytes.
 
 ## Install
 
@@ -28,104 +15,77 @@ npm install canonical-json
 
 ## Usage
 
-### ES Module
-
 ```js
-import stringify, { stringifyCopy } from 'canonical-json'
+import stringify from 'canonical-json'
 
-const obj = { b: 2, a: 1, c: { y: 0, x: 9 } }
-console.log(stringify(obj))       // {"a":1,"b":2,"c":{"x":9,"y":0}}
-console.log(stringifyCopy(obj))   // same output via deep-copy approach
+stringify({ b: 2, a: 1, c: { y: 0, x: 9 } })
+// '{"a":1,"b":2,"c":{"x":9,"y":0}}'
 ```
 
-#### Custom Key Order
+### Replacer
 
-You can pass an optional comparator function to control key ordering:
+Supports both function and array replacers, just like `JSON.stringify`:
 
 ```js
-const obj = {
-  first: 'a',
-  second: 'b',
-  third: 'c',
-  fourth: 'd',
-  last: 'foo'
-}
+stringify({ a: 1, b: 2, c: 3 }, ['a', 'c'])
+// '{"a":1,"c":3}'
 
-const order = { first: 1, second: 2, third: 3, fourth: 4 }
+stringify({ a: 1, b: 2 }, (key, value) => key === 'b' ? undefined : value)
+// '{"a":1}'
+```
+
+### Indentation
+
+```js
+stringify({ a: 1 }, null, 2)
+// '{\n  "a": 1\n}'
+```
+
+### Custom Key Order
+
+Pass a comparator function as the fourth argument:
+
+```js
+const order = { first: 1, second: 2, third: 3 }
 const cmp = (a, b) => (order[a] || 9999) - (order[b] || 9999)
 
-console.log(stringify(obj, undefined, undefined, cmp))
-// {"first":"a","second":"b","third":"c","fourth":"d","last":"foo"}
-
-console.log(stringifyCopy(obj, cmp))
-// same result via copy-based serializer
+stringify({ third: 'c', first: 'a', second: 'b' }, null, null, cmp)
+// '{"first":"a","second":"b","third":"c"}'
 ```
-
-### CommonJS
-
-```js
-const { default: stringify, stringifyCopy } = require('canonical-json')
-
-console.log(stringify({ foo: 'bar', baz: 1 }))
-```
-
----
 
 ## API
 
 ```ts
-function stringify(
+export default function stringify(
   value: any,
-  replacer?: (key: string, value: any) => any,
+  replacer?: ((key: string, value: any) => any) | string[],
   space?: string | number,
   keyCompare?: (a: string, b: string) => number
-): string
-
-function stringifyCopy(
-  value: any,
-  keyCompare?: (a: string, b: string) => number
-): string
-
-export default stringify
+): string | undefined
 ```
 
-- **keyCompare**: optional comparator `(a, b) => number` for object key sorting.
+## RFC 8785 Compliance
 
----
+When called without `replacer`, `space`, or `keyCompare`, the output conforms to [RFC 8785 (JCS)](https://www.rfc-editor.org/rfc/rfc8785):
 
-## Performance Comparison
-
-Tested on Node.js (2022 MacBook Air M2):
-
-- **native `JSON.stringify`**: ~75 ms  
-- **canonical `stringify.js`**: ~156 ms  
-- **copy & native `stringify-copy.js`**: ~117 ms  
-
-Performance test source: [test/performance.js](https://github.com/mirkokiefer/canonical-json/blob/master/test/performance.js)
-
----
+- Object keys sorted by UTF-16 code unit order
+- Numbers serialized per ES6 `Number.toString()` rules (`-0` becomes `0`)
+- Only mandatory characters escaped (`U+0000`-`U+001F`, `"`, `\`)
+- No whitespace
 
 ## CLI
-
-Use the `canonical-json` CLI to normalize JSON via stdin/stdout:
 
 ```bash
 echo '{"b":2,"a":1}' | canonical-json > out.json
 ```
-
----
-
-## Links
-
-- [CANON](https://github.com/davidchambers/CANON) — similar canonical JSON project.
-
----
 
 ## Test
 
 ```bash
 npm test
 ```
+
+Zero dependencies. Tests use Node's built-in test runner.
 
 ## License
 
